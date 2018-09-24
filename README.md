@@ -1,1 +1,1 @@
-# mantiz_tests
+# repository for Python Training
