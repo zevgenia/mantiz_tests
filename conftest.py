@@ -3,7 +3,7 @@ import pytest
 from fixture.application import Application
 import os.path
 import ftputil
-import ftplib
+
 
 fixture = None
 target = None
@@ -41,15 +41,12 @@ def configure_server(request, config):
 
 
 def install_server_configuration(host, username, password):
-    try:
-     remote = ftputil.FTPHost(host, username, password)
-     if remote.path.isfile("config_inc.php.bak"):
-         remote.remove("config_inc.php.bak")
-     if remote.path.isfile("config_inc.php"):
-        remote.rename("config_inc.php", "config_inc.php.bak")
+    with ftputil.FTPHost(host, username, password) as remote:
+        if remote.path.isfile("config_inc.php.bak"):
+            remote.remove("config_inc.php.bak")
+        if remote.path.isfile("config_inc.php"):
+                remote.rename("config_inc.php", "config_inc.php.bak")
         remote.upload(os.path.join(os.path.dirname(__file__), "resourses/config_inc.php"), "config_inc.php")
-    except:
-        return EOFError
 
 
 def restore_server_configuration(host, username, password):
